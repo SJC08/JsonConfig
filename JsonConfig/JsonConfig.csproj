@@ -5,11 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageId>AS.JsonConfig</PackageId>
     <Version>1.0.4</Version>
-    <Authors>AlexSJC</Authors>
     <Description>Quickly load and save configurations via JSON</Description>
-    <Copyright>Copyright © AlexSJC 2024</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/SJC08/JsonConfig</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
