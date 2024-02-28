@@ -25,6 +25,7 @@ namespace AS.JsonConfig
             AllowTrailingCommas = true,
             Converters = { new JsonStringEnumConverter() },
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            IgnoreReadOnlyProperties = true,
             NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals | JsonNumberHandling.AllowReadingFromString,
             PropertyNameCaseInsensitive = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
