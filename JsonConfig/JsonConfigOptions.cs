@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace AS.JsonConfig
+namespace Asjc.JsonConfig
 {
 
     public sealed class JsonConfigOptions

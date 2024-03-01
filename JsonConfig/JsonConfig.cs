@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AS.JsonConfig
+namespace Asjc.JsonConfig
 {
     public abstract class JsonConfig
     {
