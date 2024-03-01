@@ -1,4 +1,6 @@
-AS.JsonConfig helps you quickly load and save configurations via JSON.
+[![NuGet](https://img.shields.io/nuget/v/Asjc.JsonConfig)](https://www.nuget.org/packages/Asjc.JsonConfig/)
+
+Asjc.JsonConfig helps you quickly load and save configurations via JSON.
 
 **Use `Asjc.*` instead of `AS.*` and `AsUtils.*`!**
 
