@@ -4,7 +4,6 @@ using System.Text.Json;
 
 namespace Asjc.JsonConfig
 {
-
     public sealed class JsonConfigOptions
     {
         public JsonConfigOptions() { }
@@ -25,7 +24,6 @@ namespace Asjc.JsonConfig
             AllowTrailingCommas = true,
             Converters = { new JsonStringEnumConverter() },
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            IgnoreReadOnlyProperties = true,
             NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals | JsonNumberHandling.AllowReadingFromString,
             PropertyNameCaseInsensitive = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
