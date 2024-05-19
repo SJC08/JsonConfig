@@ -17,6 +17,26 @@ namespace Asjc.JsonConfig
 
         public static JsonConfigOptions GlobalOptions { get; set; } = new();
 
+        public event Action<JsonConfig>? Read;
+
+        public event Action<JsonConfig>? Create;
+
+        public event Action<JsonConfig>? AfterLoad;
+
+        public event Action<JsonConfig>? BeforeSave;
+
+        public event Action<JsonConfig>? AfterSave;
+
+        protected virtual void OnRead() => Read?.Invoke(this);
+
+        protected virtual void OnCreate() => Create?.Invoke(this);
+
+        protected virtual void OnAfterLoad() => AfterLoad?.Invoke(this);
+
+        protected virtual void OnBeforeSave() => BeforeSave?.Invoke(this);
+
+        protected virtual void OnAfterSave() => AfterSave?.Invoke(this);
+
         public static T? Load<T>() where T : JsonConfig, new()
         {
             return Load<T>(new T().DefaultPath, new T().DefaultOptions);
@@ -39,9 +59,10 @@ namespace Asjc.JsonConfig
             if (File.Exists(path))
             {
                 string json = File.ReadAllText(path);
-                config = JsonSerializer.Deserialize<T>(json, jco.SerializerOptions);
+                config = JsonSerializer.Deserialize<T>(json, jco.SerializerOptions); // When deserializing "null", it returns null!
                 if (config != null)
                 {
+                    config.OnRead();
                     config.Path = path;
                     config.Options = options;
                 }
@@ -53,9 +74,11 @@ namespace Asjc.JsonConfig
                     Path = path,
                     Options = options
                 };
+                config.OnCreate();
                 if (jco.SaveNew)
                     config.Save();
             }
+            config?.OnAfterLoad();
             return config;
         }
 
@@ -105,9 +128,11 @@ namespace Asjc.JsonConfig
 
         public void Save(string path, JsonConfigOptions? options)
         {
+            OnBeforeSave();
             var jco = options ?? GlobalOptions;
             string json = JsonSerializer.Serialize(this, GetType(), jco.SerializerOptions);
             File.WriteAllText(path, json);
+            OnAfterSave();
         }
 
         public bool TrySave()
