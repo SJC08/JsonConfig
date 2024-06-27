@@ -17,6 +17,8 @@ namespace Asjc.JsonConfig
 
         public static JsonConfigOptions GlobalOptions { get; set; } = new();
 
+        public string Json => JsonSerializer.Serialize(this, GetType());
+
         public event Action<JsonConfig>? Read;
 
         public event Action<JsonConfig>? Create;
@@ -162,5 +164,7 @@ namespace Asjc.JsonConfig
                 return false;
             }
         }
+
+        public override string ToString() => Json;
     }
 }
