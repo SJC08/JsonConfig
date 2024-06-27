@@ -5,6 +5,9 @@ namespace Asjc.JsonConfig
 {
     public abstract class JsonConfig
     {
+        /// <summary>
+        /// The path to the config file.
+        /// </summary>
         [JsonIgnore]
         public string Path { get; set; }
 
@@ -17,16 +20,35 @@ namespace Asjc.JsonConfig
 
         public static JsonConfigOptions GlobalOptions { get; set; } = new();
 
+        /// <summary>
+        /// Gets the JSON string representation of the current object.
+        /// </summary>
+        [JsonIgnore]
         public string Json => JsonSerializer.Serialize(this, GetType());
 
+        /// <summary>
+        /// Occurs when loading a config from a file.
+        /// </summary>
         public event Action<JsonConfig>? Read;
 
+        /// <summary>
+        /// Occurs when createing a new config.
+        /// </summary>
         public event Action<JsonConfig>? Create;
 
+        /// <summary>
+        /// Occurs when a config is loaded.
+        /// </summary>
         public event Action<JsonConfig>? AfterLoad;
 
+        /// <summary>
+        /// Occurs before saving the config.
+        /// </summary>
         public event Action<JsonConfig>? BeforeSave;
 
+        /// <summary>
+        /// Occurs after saving the config.
+        /// </summary>
         public event Action<JsonConfig>? AfterSave;
 
         protected virtual void OnRead() => Read?.Invoke(this);
@@ -71,12 +93,10 @@ namespace Asjc.JsonConfig
             }
             else if (jco.CreateNew)
             {
-                config = new()
-                {
-                    Path = path,
-                    Options = options
-                };
+                config = new();
                 config.OnCreate();
+                config.Path = path;
+                config.Options = options;
                 if (jco.SaveNew)
                     config.Save();
             }
