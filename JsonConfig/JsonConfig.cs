@@ -14,9 +14,9 @@ namespace Asjc.JsonConfig
         protected virtual string DefaultPath => $"{GetType().Name}.json";
 
         [JsonIgnore]
-        public JsonConfigOptions? Options { get; set; }
+        public JsonConfigOptions Options { get; set; }
 
-        protected virtual JsonConfigOptions? DefaultOptions => null;
+        protected virtual JsonConfigOptions DefaultOptions => GlobalOptions;
 
         public static JsonConfigOptions GlobalOptions { get; set; } = new();
 
@@ -71,19 +71,18 @@ namespace Asjc.JsonConfig
             return Load<T>(path, new T().DefaultOptions);
         }
 
-        public static T? Load<T>(JsonConfigOptions? options) where T : JsonConfig, new()
+        public static T? Load<T>(JsonConfigOptions options) where T : JsonConfig, new()
         {
             return Load<T>(new T().DefaultPath, options);
         }
 
-        public static T? Load<T>(string path, JsonConfigOptions? options) where T : JsonConfig, new()
+        public static T? Load<T>(string path, JsonConfigOptions options) where T : JsonConfig, new()
         {
-            var jco = options ?? GlobalOptions;
             T? config = default;
             if (File.Exists(path))
             {
                 string json = File.ReadAllText(path);
-                config = JsonSerializer.Deserialize<T>(json, jco.SerializerOptions); // When deserializing "null", it returns null!
+                config = JsonSerializer.Deserialize<T>(json, options.SerializerOptions); // When deserializing "null", it returns null!
                 if (config != null)
                 {
                     config.OnRead();
@@ -91,13 +90,13 @@ namespace Asjc.JsonConfig
                     config.Options = options;
                 }
             }
-            else if (jco.CreateNew)
+            else if (options.CreateNew)
             {
                 config = new();
                 config.OnCreate();
                 config.Path = path;
                 config.Options = options;
-                if (jco.SaveNew)
+                if (options.SaveNew)
                     config.Save();
             }
             config?.OnAfterLoad();
@@ -114,12 +113,12 @@ namespace Asjc.JsonConfig
             return TryLoad(path, new T().DefaultOptions, out config);
         }
 
-        public static bool TryLoad<T>(JsonConfigOptions? options, out T? config) where T : JsonConfig, new()
+        public static bool TryLoad<T>(JsonConfigOptions options, out T? config) where T : JsonConfig, new()
         {
             return TryLoad(new T().DefaultPath, options, out config);
         }
 
-        public static bool TryLoad<T>(string path, JsonConfigOptions? options, out T? config) where T : JsonConfig, new()
+        public static bool TryLoad<T>(string path, JsonConfigOptions options, out T? config) where T : JsonConfig, new()
         {
             try
             {
@@ -143,16 +142,15 @@ namespace Asjc.JsonConfig
             Save(path, Options);
         }
 
-        public void Save(JsonConfigOptions? options)
+        public void Save(JsonConfigOptions options)
         {
             Save(Path, options);
         }
 
-        public void Save(string path, JsonConfigOptions? options)
+        public void Save(string path, JsonConfigOptions options)
         {
             OnBeforeSave();
-            var jco = options ?? GlobalOptions;
-            string json = JsonSerializer.Serialize(this, GetType(), jco.SerializerOptions);
+            string json = JsonSerializer.Serialize(this, GetType(), options.SerializerOptions);
             File.WriteAllText(path, json);
             OnAfterSave();
         }
@@ -167,12 +165,12 @@ namespace Asjc.JsonConfig
             return TrySave(path, Options);
         }
 
-        public bool TrySave(JsonConfigOptions? options)
+        public bool TrySave(JsonConfigOptions options)
         {
             return TrySave(Path, options);
         }
 
-        public bool TrySave(string path, JsonConfigOptions? options)
+        public bool TrySave(string path, JsonConfigOptions options)
         {
             try
             {
