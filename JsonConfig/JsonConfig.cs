@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using static Asjc.Extensions.TryExtensions;
 
 namespace Asjc.JsonConfig
 {
@@ -29,12 +30,12 @@ namespace Asjc.JsonConfig
         /// <summary>
         /// Occurs when loading a config from a file.
         /// </summary>
-        public event Action<JsonConfig>? Read;
+        public event Action<JsonConfig>? Reading;
 
         /// <summary>
-        /// Occurs when createing a new config.
+        /// Occurs when creating a new config.
         /// </summary>
-        public event Action<JsonConfig>? Create;
+        public event Action<JsonConfig>? Creating;
 
         /// <summary>
         /// Occurs when a config is loaded.
@@ -51,9 +52,9 @@ namespace Asjc.JsonConfig
         /// </summary>
         public event Action<JsonConfig>? AfterSave;
 
-        protected virtual void OnRead() => Read?.Invoke(this);
+        protected virtual void OnReading() => Reading?.Invoke(this);
 
-        protected virtual void OnCreate() => Create?.Invoke(this);
+        protected virtual void OnCreating() => Creating?.Invoke(this);
 
         protected virtual void OnAfterLoad() => AfterLoad?.Invoke(this);
 
@@ -61,91 +62,60 @@ namespace Asjc.JsonConfig
 
         protected virtual void OnAfterSave() => AfterSave?.Invoke(this);
 
-        public static T? Load<T>() where T : JsonConfig, new()
-        {
-            return Load<T>(new T().DefaultPath, new T().DefaultOptions);
-        }
+        public static T? Load<T>() where T : JsonConfig, new() => Load<T>(new T().DefaultPath, new T().DefaultOptions);
 
-        public static T? Load<T>(string path) where T : JsonConfig, new()
-        {
-            return Load<T>(path, new T().DefaultOptions);
-        }
+        public static T? Load<T>(string path) where T : JsonConfig, new() => Load<T>(path, new T().DefaultOptions);
 
-        public static T? Load<T>(JsonConfigOptions options) where T : JsonConfig, new()
-        {
-            return Load<T>(new T().DefaultPath, options);
-        }
+        public static T? Load<T>(JsonConfigOptions options) where T : JsonConfig, new() => Load<T>(new T().DefaultPath, options);
 
         public static T? Load<T>(string path, JsonConfigOptions options) where T : JsonConfig, new()
         {
             T? config = default;
             if (File.Exists(path))
-            {
-                string json = File.ReadAllText(path);
-                config = JsonSerializer.Deserialize<T>(json, options.SerializerOptions); // When deserializing "null", it returns null!
-                if (config != null)
-                {
-                    config.OnRead();
-                    config.Path = path;
-                    config.Options = options;
-                }
-            }
+                config = Read<T>(path, options);
             else if (options.CreateNew)
-            {
-                config = new();
-                config.OnCreate();
-                config.Path = path;
-                config.Options = options;
-                if (options.SaveNew)
-                    config.Save();
-            }
+                config = Create<T>(path, options);
             config?.OnAfterLoad();
             return config;
         }
 
-        public static bool TryLoad<T>(out T? config) where T : JsonConfig, new()
-        {
-            return TryLoad(new T().DefaultPath, new T().DefaultOptions, out config);
-        }
+        public static bool TryLoad<T>(out T? config) where T : JsonConfig, new() => Try(() => Load<T>(), out config);
 
-        public static bool TryLoad<T>(string path, out T? config) where T : JsonConfig, new()
-        {
-            return TryLoad(path, new T().DefaultOptions, out config);
-        }
+        public static bool TryLoad<T>(string path, out T? config) where T : JsonConfig, new() => Try(() => Load<T>(path), out config);
 
-        public static bool TryLoad<T>(JsonConfigOptions options, out T? config) where T : JsonConfig, new()
-        {
-            return TryLoad(new T().DefaultPath, options, out config);
-        }
+        public static bool TryLoad<T>(JsonConfigOptions options, out T? config) where T : JsonConfig, new() => Try(() => Load<T>(options), out config);
 
-        public static bool TryLoad<T>(string path, JsonConfigOptions options, out T? config) where T : JsonConfig, new()
+        public static bool TryLoad<T>(string path, JsonConfigOptions options, out T? config) where T : JsonConfig, new() => Try(() => Load<T>(path, options), out config);
+
+        public static T? Read<T>(string path, JsonConfigOptions options) where T : JsonConfig
         {
-            try
+            string json = File.ReadAllText(path);
+            T? config = JsonSerializer.Deserialize<T>(json, options.SerializerOptions); // When deserializing "null", it returns null!
+            if (config != null)
             {
-                config = Load<T>(path, options);
-                return true;
+                config.OnReading();
+                config.Path = path;
+                config.Options = options;
             }
-            catch
-            {
-                config = default;
-                return false;
-            }
+            return config;
         }
 
-        public void Save()
+        public static T Create<T>(string path, JsonConfigOptions options) where T : JsonConfig, new()
         {
-            Save(Path, Options);
+            T config = new();
+            config.OnCreating();
+            config.Path = path;
+            config.Options = options;
+            if (options.SaveNew)
+                config.Save();
+            return config;
         }
 
-        public void Save(string path)
-        {
-            Save(path, Options);
-        }
+        public void Save() => Save(Path, Options);
 
-        public void Save(JsonConfigOptions options)
-        {
-            Save(Path, options);
-        }
+        public void Save(string path) => Save(path, Options);
+
+        public void Save(JsonConfigOptions options) => Save(Path, options);
 
         public void Save(string path, JsonConfigOptions options)
         {
@@ -155,33 +125,13 @@ namespace Asjc.JsonConfig
             OnAfterSave();
         }
 
-        public bool TrySave()
-        {
-            return TrySave(Path, Options);
-        }
+        public bool TrySave() => Try(() => Save());
 
-        public bool TrySave(string path)
-        {
-            return TrySave(path, Options);
-        }
+        public bool TrySave(string path) => Try(() => Save(path));
 
-        public bool TrySave(JsonConfigOptions options)
-        {
-            return TrySave(Path, options);
-        }
+        public bool TrySave(JsonConfigOptions options) => Try(() => Save(options));
 
-        public bool TrySave(string path, JsonConfigOptions options)
-        {
-            try
-            {
-                Save(path, options);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        public bool TrySave(string path, JsonConfigOptions options) => Try(() => Save(path, options));
 
         public override string ToString() => Json;
     }
