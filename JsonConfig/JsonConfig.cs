@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.IO;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using static Asjc.Extensions.TryExtensions;
 
@@ -19,7 +21,7 @@ namespace Asjc.JsonConfig
 
         protected virtual JsonConfigOptions DefaultOptions => GlobalOptions;
 
-        public static JsonConfigOptions GlobalOptions { get; set; } = new();
+        public static JsonConfigOptions GlobalOptions { get; set; } = new JsonConfigOptions();
 
         /// <summary>
         /// Gets the JSON string representation of the current object.
@@ -130,7 +132,7 @@ namespace Asjc.JsonConfig
 
         public static T Create<T>(string path, JsonConfigOptions options) where T : JsonConfig, new()
         {
-            T config = new();
+            T config = new T();
             config.OnCreating();
             config.Path = path;
             config.Options = options;
