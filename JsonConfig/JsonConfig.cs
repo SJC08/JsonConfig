@@ -87,7 +87,29 @@ namespace Asjc.JsonConfig
 
         public static bool TryLoad<T>(string path, JsonConfigOptions options, out T? config) where T : JsonConfig, new() => Try(() => Load<T>(path, options), out config);
 
-        public static T? Read<T>(string path, JsonConfigOptions options) where T : JsonConfig
+        public static T? TryLoad<T>() where T : JsonConfig, new() => Try(() => Load<T>());
+
+        public static T? TryLoad<T>(string path) where T : JsonConfig, new() => Try(() => Load<T>(path));
+
+        public static T? TryLoad<T>(JsonConfigOptions options) where T : JsonConfig, new() => Try(() => Load<T>(options));
+
+        public static T? TryLoad<T>(string path, JsonConfigOptions options) where T : JsonConfig, new() => Try(() => Load<T>(path, options));
+
+        public static T SafeLoad<T>() where T : JsonConfig, new() => TryLoad<T>() ?? Create<T>();
+
+        public static T SafeLoad<T>(string path) where T : JsonConfig, new() => TryLoad<T>(path) ?? Create<T>(path);
+
+        public static T SafeLoad<T>(JsonConfigOptions options) where T : JsonConfig, new() => TryLoad<T>(options) ?? Create<T>(options);
+
+        public static T SafeLoad<T>(string path, JsonConfigOptions options) where T : JsonConfig, new() => TryLoad<T>(path, options) ?? Create<T>(path, options);
+
+        public static T? Read<T>() where T : JsonConfig, new() => Read<T>(new T().DefaultPath, new T().DefaultOptions);
+
+        public static T? Read<T>(string path) where T : JsonConfig, new() => Read<T>(path, new T().DefaultOptions);
+
+        public static T? Read<T>(JsonConfigOptions options) where T : JsonConfig, new() => Read<T>(new T().DefaultPath, options);
+
+        public static T? Read<T>(string path, JsonConfigOptions options) where T : JsonConfig, new()
         {
             string json = File.ReadAllText(path);
             T? config = JsonSerializer.Deserialize<T>(json, options.SerializerOptions); // When deserializing "null", it returns null!
@@ -99,6 +121,12 @@ namespace Asjc.JsonConfig
             }
             return config;
         }
+
+        public static T Create<T>() where T : JsonConfig, new() => Create<T>(new T().DefaultPath, new T().DefaultOptions);
+
+        public static T Create<T>(string path) where T : JsonConfig, new() => Create<T>(path, new T().DefaultOptions);
+
+        public static T Create<T>(JsonConfigOptions options) where T : JsonConfig, new() => Create<T>(new T().DefaultPath, options);
 
         public static T Create<T>(string path, JsonConfigOptions options) where T : JsonConfig, new()
         {
