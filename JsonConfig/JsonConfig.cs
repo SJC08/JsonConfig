@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using static Asjc.Extensions.TryExtensions;
+using static Asjc.Extensions.TryHelper;
 
 namespace Asjc.JsonConfig
 {
