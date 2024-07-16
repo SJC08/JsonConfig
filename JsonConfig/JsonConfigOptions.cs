@@ -19,7 +19,7 @@ namespace Asjc.JsonConfig
 
         public bool SaveNew { get; set; } = true;
 
-        public JsonSerializerOptions SerializerOptions { get; set; } = new JsonSerializerOptions()
+        public JsonSerializerOptions SerializerOptions { get; set; } = new()
         {
             AllowTrailingCommas = true,
             Converters = { new JsonStringEnumConverter() },
