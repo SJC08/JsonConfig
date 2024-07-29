@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using static Asjc.Extensions.TryHelper;
+using static Asjc.Utils.Tryer;
 
 namespace Asjc.JsonConfig
 {
