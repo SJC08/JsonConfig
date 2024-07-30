@@ -6,8 +6,11 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.3.8</Version>
-    <Description>Quickly load and save configurations via JSON</Description>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>1.3.9</Version>
+    <Description>Quickly load and save configurations via JSON.</Description>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/SJC08/JsonConfig</RepositoryUrl>

@@ -1,34 +1,27 @@
+# JsonConfig
+
 [![NuGet](https://img.shields.io/nuget/v/Asjc.JsonConfig)](https://www.nuget.org/packages/Asjc.JsonConfig/)
 
-Asjc.JsonConfig helps you quickly load and save configurations via JSON.
+Quickly load and save configurations via JSON.
 
 ## Quick Start
 
 ```csharp
 public class Settings : JsonConfig
 {
-    public string MyString { get; set; }
+    public string? Text { get; set; }
 }
 ```
 
 ```csharp
 var settings = JsonConfig.Load<Settings>();
-settings.MyString = "Hello!";
-settings.Save();
-```
-
-## More Examples
-
-### Tiny Log
-
-```csharp
-public class Log : JsonConfig
+if (settings != null)
 {
-    protected override string DefaultPath => $"Logs\\{DateTime.Now:yyyyMMdd}.json";
-
-    protected override JsonConfigOptions DefaultOptions => new() { SaveNew = false };
-
-    public List<string> Messages { get; set; } = new();
+    settings.Text = "Hello!";
+    settings.Save();
 }
 ```
 
+## Credits
+
+- Icon from https://www.iconfinder.com/icons/9040309
