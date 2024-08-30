@@ -7,18 +7,30 @@ namespace Asjc.JsonConfig
     public abstract class JsonConfig
     {
         /// <summary>
-        /// The path to the config file.
+        /// Gets or sets the path to the config file.
         /// </summary>
         [JsonIgnore]
         public string Path { get; set; }
 
+        /// <summary>
+        /// Gets or sets the default <see cref="Path"/> for the current class.
+        /// </summary>
         protected virtual string DefaultPath => $"{GetType().Name}.json";
 
+        /// <summary>
+        /// Gets or sets the options to use.
+        /// </summary>
         [JsonIgnore]
         public JsonConfigOptions Options { get; set; }
 
+        /// <summary>
+        /// Gets or sets the default <see cref="Options"/> for the current class.
+        /// </summary>
         protected virtual JsonConfigOptions DefaultOptions => GlobalOptions;
 
+        /// <summary>
+        /// Gets or sets the global default <see cref="Options"/>.
+        /// </summary>
         public static JsonConfigOptions GlobalOptions { get; set; } = new();
 
         /// <summary>
